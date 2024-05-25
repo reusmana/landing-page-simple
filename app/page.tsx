@@ -4,20 +4,18 @@ import logo from "../assets/logo.webp";
 import phone from "../assets/phone.webp";
 import { Tilt } from "react-tilt";
 import { Navigation, Pagination, A11y, Autoplay } from "swiper/modules";
+import GET_STATION from "@/graphql/queries";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 
-// Import Swiper styles
+import apolloClient from "../lib/apolloClient";
+import { APIProvider, Map, AdvancedMarker } from "@vis.gl/react-google-maps";
+import { useQuery } from "@apollo/client";
+
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/autoplay";
-
-import { Key } from "react";
-import { useQuery } from "@apollo/client";
-import { GET_STATION, STATION_DETAIL } from "@/graphql/queries";
-import apolloClient from "../lib/apolloClient";
-import { APIProvider, Map, AdvancedMarker } from "@vis.gl/react-google-maps";
 
 const Home = () => {
   const { data } = useQuery(GET_STATION);
@@ -120,63 +118,61 @@ const Home = () => {
               },
             }}
           >
-            {data?.publicChargeStation?.map(
-              (val, key: Key | null | undefined) => {
-                const { coordinates } = val;
-                return (
-                  <SwiperSlide key={key} className="my-20 xl:mx-20">
-                    <Tilt
-                      key={key}
-                      className="max-w-lg w-full rounded-lg h-96 bg-green-300 border-green-900 border-2  overflow-hidden p-5 pb-20"
-                    >
-                      <table className="my-2">
-                        <tr>
-                          <td className="text-slate-700 text-base font-semibold">
-                            Name
-                          </td>
-                          <td className="text-slate-700 text-base font-semibold">
-                            :
-                          </td>
-                          <td className="text-slate-700 text-base font-semibold">
-                            {val.name}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className="text-slate-700 text-base font-semibold">
-                            Location
-                          </td>
-                          <td className="text-slate-700 text-base font-semibold">
-                            :
-                          </td>
-                          <td className="text-slate-700 text-base font-semibold">
-                            {val.state.slice(0, 20)} ...
-                          </td>
-                        </tr>
-                      </table>
-                      <APIProvider apiKey="AIzaSyD4dcibVLUdr_7esjtrWpsqBNGcHhMprpA">
-                        <div className="w-full h-full">
-                          <Map
-                            zoom={12}
-                            center={{
+            {data?.publicChargeStation?.map((val, key) => {
+              const { coordinates } = val;
+              return (
+                <SwiperSlide key={key} className="my-20 xl:mx-20">
+                  <Tilt
+                    key={key}
+                    className="max-w-lg w-full rounded-lg h-96 bg-green-300 border-green-900 border-2  overflow-hidden p-5 pb-20"
+                  >
+                    <table className="my-2">
+                      <tr>
+                        <td className="text-slate-700 text-base font-semibold">
+                          Name
+                        </td>
+                        <td className="text-slate-700 text-base font-semibold">
+                          :
+                        </td>
+                        <td className="text-slate-700 text-base font-semibold">
+                          {val.name}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="text-slate-700 text-base font-semibold">
+                          Location
+                        </td>
+                        <td className="text-slate-700 text-base font-semibold">
+                          :
+                        </td>
+                        <td className="text-slate-700 text-base font-semibold">
+                          {val.state.slice(0, 20)} ...
+                        </td>
+                      </tr>
+                    </table>
+                    <APIProvider apiKey="AIzaSyD4dcibVLUdr_7esjtrWpsqBNGcHhMprpA">
+                      <div className="w-full h-full">
+                        <Map
+                          zoom={12}
+                          center={{
+                            lng: coordinates.coordinates[0],
+                            lat: coordinates.coordinates[1],
+                          }}
+                          mapId={`4bcf5eb555063da8`}
+                        >
+                          <AdvancedMarker
+                            position={{
                               lng: coordinates.coordinates[0],
                               lat: coordinates.coordinates[1],
                             }}
-                            mapId={`4bcf5eb555063da8`}
-                          >
-                            <AdvancedMarker
-                              position={{
-                                lng: coordinates.coordinates[0],
-                                lat: coordinates.coordinates[1],
-                              }}
-                            ></AdvancedMarker>
-                          </Map>
-                        </div>
-                      </APIProvider>
-                    </Tilt>
-                  </SwiperSlide>
-                );
-              }
-            )}
+                          ></AdvancedMarker>
+                        </Map>
+                      </div>
+                    </APIProvider>
+                  </Tilt>
+                </SwiperSlide>
+              );
+            })}
           </Swiper>
         </div>
       </section>

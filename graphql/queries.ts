@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 
-export const GET_STATION = gql`
+const GET_STATION = gql`
   # Try to write your query here
   query GetChargeStation($limit: Int, $offset: Int) {
     publicChargeStation(
@@ -58,9 +58,11 @@ export const GET_STATION = gql`
   }
 `;
 
+export default GET_STATION;
+
 export const STATION_DETAIL = gql`
   query PublicChargeStation($stationId: bigint) {
-    publicChargeStation(where: { id: { _eq: 10007 } }) {
+    publicChargeStation(where: { id: { _eq: $stationId } }) {
       id
       name
       coordinates
